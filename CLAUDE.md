@@ -172,6 +172,137 @@ The API triggers `revalidatePath` on the affected pages — you do not need to r
 `content/templates/*.md` are starter structures. Edit them to change the
 default shape of new posts. They are plain markdown — no migration needed.
 
+## Pages (beyond the blog)
+
+The site is a full website builder. Alongside blog posts, you have **pages**
+authored in MDX — they live at arbitrary URLs (`/about`, `/pricing`, `/contact`)
+and can use composable blocks alongside markdown prose.
+
+### Anatomy of a page
+
+```mdx
+---
+slug: pricing
+title: "Pricing"
+description: "Simple, transparent pricing."
+template: landing           # standard | landing | minimal
+status: published           # draft | published
+showInNav: true             # show in header nav
+navOrder: 30                # lower = leftmost
+---
+
+<Hero title="Simple pricing" subtitle="…" align="center" />
+<Pricing tiers={[...]} />
+<FAQ items={[...]} />
+```
+
+### Blocks
+
+All blocks are auto-registered from `src/blocks/index.ts` and available inside
+any MDX. Read each block's source file for exact prop types:
+
+| Block           | Best for                                    |
+| --------------- | ------------------------------------------- |
+| `<Hero>`        | Top-of-page pitch                           |
+| `<Features>`    | Icon grid of 3–4 feature points             |
+| `<Split>`       | Image-left / text-right (or reverse)        |
+| `<Stats>`       | Big numbers                                 |
+| `<Pricing>`     | Tier comparison + CTA                       |
+| `<FAQ>`         | Q&A list (emits FAQPage JSON-LD)            |
+| `<Testimonials>`| Quote cards                                 |
+| `<Gallery>`     | Image grid                                  |
+| `<Logos>`       | Client / partner logo strip                 |
+| `<CTA>`         | Call-to-action band                         |
+| `<Contact>`     | Contact form posting to `/api/contact`      |
+| `<Prose>`       | Long-form article wrapped in typography     |
+| `<Section>`     | Generic wrapper (tone: default/muted/accent)|
+| `<Button>`      | Styled link                                 |
+
+To add a new block: create `src/blocks/<Name>.tsx`, export it from
+`src/blocks/index.ts`, add to the `blockComponents` registry.
+
+### Templates
+
+`template` in frontmatter changes the layout:
+- `standard` — renders title + description as a page header, content underneath
+- `landing` — no auto-header, MDX fills the whole frame (use `<Hero>`)
+- `minimal` — no header, tight spacing
+
+Starter templates are in `content/page-templates/*.mdx`.
+
+### The authoring loop
+
+```bash
+cp content/page-templates/pricing.mdx content/page-drafts/pricing.mdx
+# edit it
+npm run page:sync -- content/page-drafts/pricing.mdx
+npm run page:list
+```
+
+Pull a page back for editing:
+
+```bash
+npm run page:pull -- pricing
+```
+
+### REST API for pages
+
+| Method | Path                | Purpose           |
+| ------ | ------------------- | ----------------- |
+| GET    | `/api/pages`        | list (`?status=`) |
+| POST   | `/api/pages`        | create            |
+| GET    | `/api/pages/:slug`  | read              |
+| PATCH  | `/api/pages/:slug`  | update            |
+| DELETE | `/api/pages/:slug`  | delete            |
+
+Same Bearer auth as posts.
+
+### Root URL (`/`) behavior
+
+If a page with `slug: home` exists, it's rendered at `/`. Otherwise `/`
+redirects to `/blog`. To make `/` a proper landing, edit the
+`content/page-templates/home.mdx` and resync, or edit the "home" page
+directly in the admin UI.
+
+## Site chrome (nav, footer, logo)
+
+Edit `src/site.config.ts`:
+
+```ts
+export const siteConfig: SiteConfig = {
+  logo: { text: "YourBrand" },
+  nav: [
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog" },
+    { label: "Pricing", href: "/pricing" },
+  ],
+  primaryCTA: { label: "Get started", href: "/contact" },
+  footerColumns: [...],
+  copyright: "© 2026 …",
+};
+```
+
+Any page with `showInNav: true` is **automatically** added to the header nav
+after the static entries (sorted by `navOrder`). You don't need to edit
+site.config when adding nav-visible pages.
+
+## Media uploads
+
+Local filesystem for now (saves to `public/uploads/`). Admin UI at
+`/admin/media`. REST:
+
+```bash
+curl -X POST http://localhost:3000/api/media \
+  -H "Authorization: Bearer $API_KEY" \
+  -F file=@image.jpg -F alt="description"
+```
+
+Response includes a URL like `/uploads/image-abcd.jpg` — use it in MDX or
+post frontmatter as `coverImage`.
+
+For production on Vercel (no persistent disk) swap `src/lib/media.ts` to
+upload to S3/R2/Blob storage. The `Media` model and API shape stay the same.
+
 ## Changing the design
 
 **Everything visual is controlled by one file:** `src/theme.config.ts`.

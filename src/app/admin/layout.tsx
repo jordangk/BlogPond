@@ -17,7 +17,10 @@ export default async function AdminLayout({
           <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3 text-sm">
             <div className="flex items-center gap-6">
               <Link href="/admin" className="font-semibold">Admin</Link>
-              <Link href="/admin/posts/new" className="hover:underline">New post</Link>
+              <Link href="/admin" className="hover:underline">Posts</Link>
+              <Link href="/admin/pages" className="hover:underline">Pages</Link>
+              <Link href="/admin/media" className="hover:underline">Media</Link>
+              <Link href="/admin/settings" className="hover:underline">Settings</Link>
               <Link href="/" className="text-neutral-500 hover:underline">View site</Link>
             </div>
             <form

@@ -15,7 +15,10 @@
     "post:pull": "tsx scripts/pull.ts",
     "post:list": "tsx scripts/list.ts",
     "post:publish": "tsx scripts/publish.ts",
-    "post:tick": "tsx scripts/tick.ts"
+    "post:tick": "tsx scripts/tick.ts",
+    "page:sync": "tsx scripts/page-sync.ts",
+    "page:pull": "tsx scripts/page-pull.ts",
+    "page:list": "tsx scripts/page-list.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -25,10 +28,13 @@
     "gray-matter": "^4.0.3",
     "next": "16.2.4",
     "next-auth": "^5.0.0-beta.31",
+    "next-mdx-remote": "^6.0.0",
     "prisma": "^6.19.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "rehype-autolink-headings": "^7.1.0",
     "rehype-sanitize": "^6.0.0",
+    "rehype-slug": "^6.0.0",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",

@@ -1,0 +1,54 @@
+---
+slug: pricing
+title: "Pricing"
+description: "Simple, transparent pricing."
+template: landing
+status: draft
+showInNav: true
+navOrder: 30
+---
+
+<Hero
+  eyebrow="Pricing"
+  title="Simple, transparent pricing"
+  subtitle="One sentence framing of how you charge."
+  align="center"
+/>
+
+<Pricing
+  tiers={[
+    {
+      name: "Starter",
+      price: "$0",
+      period: "forever",
+      description: "Everything you need to try it.",
+      features: ["Feature one", "Feature two", "Feature three"],
+      cta: { label: "Get started", href: "/contact" },
+    },
+    {
+      name: "Pro",
+      price: "$29",
+      period: "month",
+      description: "For small teams shipping weekly.",
+      features: ["Everything in Starter", "Pro feature", "Pro feature"],
+      cta: { label: "Start Pro", href: "/contact" },
+      featured: true,
+    },
+    {
+      name: "Team",
+      price: "$99",
+      period: "month",
+      description: "For scaling teams.",
+      features: ["Everything in Pro", "Team feature", "Priority support"],
+      cta: { label: "Contact sales", href: "/contact" },
+    },
+  ]}
+/>
+
+<FAQ
+  items={[
+    { question: "Can I cancel anytime?", answer: "Yes, anytime from the dashboard." },
+    { question: "Do you offer refunds?", answer: "Pro-rated refunds within 30 days." },
+    { question: "Is there a free trial?", answer: "Starter is free forever; Pro is free for 14 days." },
+  ]}
+/>

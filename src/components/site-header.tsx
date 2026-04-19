@@ -1,12 +1,27 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
 import { getAllTags } from "@/lib/posts";
 import { theme } from "@/theme.config";
+import { siteConfig, type NavItem } from "@/site.config";
+import { prisma } from "@/lib/prisma";
 
 export async function SiteHeader() {
   const { features, layout } = theme;
-  const tags = features.showTagStrip ? await getAllTags() : [];
+
+  const [tags, navPages] = await Promise.all([
+    features.showTagStrip ? getAllTags() : Promise.resolve([]),
+    prisma.page.findMany({
+      where: { showInNav: true, status: "published" },
+      orderBy: { navOrder: "asc" },
+      select: { slug: true, title: true },
+    }),
+  ]);
+
+  const nav: NavItem[] = [
+    ...siteConfig.nav,
+    ...navPages.map((p) => ({ label: p.title, href: `/${p.slug}` })),
+  ];
   const topTags = tags.slice(0, 6);
+
   const headerClass = [
     "border-b border-border",
     features.stickyHeader
@@ -20,13 +35,27 @@ export async function SiteHeader() {
         className={`mx-auto flex ${layout.maxWidthClass} items-center justify-between px-6 py-4`}
       >
         <Link href="/" className="text-lg font-semibold tracking-tight">
-          {site.name}
+          {siteConfig.logo.text}
         </Link>
         <div className="flex items-center gap-5 text-sm text-muted">
-          <Link href="/" className="hover:text-foreground">Home</Link>
-          <Link href="/categories" className="hover:text-foreground">Categories</Link>
-          <Link href="/about" className="hover:text-foreground">About</Link>
-          <Link href="/rss.xml" className="hover:text-foreground" aria-label="RSS feed">RSS</Link>
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="hover:text-foreground"
+              {...(item.external ? { target: "_blank", rel: "noreferrer" } : {})}
+            >
+              {item.label}
+            </Link>
+          ))}
+          {siteConfig.primaryCTA && (
+            <Link
+              href={siteConfig.primaryCTA.href}
+              className="rounded-[var(--radius)] bg-accent px-3 py-1.5 text-accent-foreground hover:opacity-90"
+            >
+              {siteConfig.primaryCTA.label}
+            </Link>
+          )}
         </div>
       </nav>
       {features.showTagStrip && topTags.length > 0 && (

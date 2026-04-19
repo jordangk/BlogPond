@@ -40,3 +40,34 @@ model Tag {
   name  String
   posts Post[] @relation("PostTags")
 }
+
+model Page {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  description String?
+  content     String
+  template    String    @default("standard")
+  status      String    @default("draft")
+  publishedAt DateTime?
+  showInNav   Boolean   @default(false)
+  navOrder    Int       @default(0)
+  coverImage  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, slug])
+  @@index([showInNav, navOrder])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String   @unique
+  url       String
+  mimeType  String
+  size      Int
+  width     Int?
+  height    Int?
+  alt       String?
+  createdAt DateTime @default(now())
+}

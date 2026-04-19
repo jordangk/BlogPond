@@ -41,6 +41,11 @@ yarn-error.log*
 # local drafts (the DB is source of truth)
 /content/drafts/*.md
 !/content/drafts/README.md
+/content/page-drafts/*.mdx
+
+# uploaded media (saved to public/uploads at runtime)
+/public/uploads/*
+!/public/uploads/.gitkeep
 
 # vercel
 .vercel

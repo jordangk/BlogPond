@@ -1,0 +1,28 @@
+---
+slug: standard-page
+title: "Standard page title"
+description: "Used for meta description, ~155 chars."
+template: standard
+status: draft
+showInNav: false
+---
+
+Standard pages get the title + description rendered as a page header
+by the route, so start your MDX body with content, not another <h1>.
+
+## Section heading
+
+Regular markdown works here. You can also drop blocks inline:
+
+<Features
+  title="Three points"
+  items={[
+    { title: "Point one", description: "Explanation." },
+    { title: "Point two", description: "Explanation." },
+    { title: "Point three", description: "Explanation." },
+  ]}
+/>
+
+## Another section
+
+More prose.

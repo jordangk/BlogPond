@@ -1,7 +1,32 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import matter from "gray-matter";
 
 const prisma = new PrismaClient();
+
+async function seedPageFromTemplate(name: string) {
+  const path = resolve(`content/page-templates/${name}.mdx`);
+  const raw = await readFile(path, "utf8");
+  const { data, content } = matter(raw);
+  const slug = String(data.slug ?? name);
+  await prisma.page.upsert({
+    where: { slug },
+    update: {},
+    create: {
+      slug,
+      title: String(data.title ?? name),
+      description: data.description ?? null,
+      content,
+      template: String(data.template ?? "standard"),
+      status: String(data.status ?? "published"),
+      publishedAt: data.status === "published" ? new Date() : null,
+      showInNav: Boolean(data.showInNav ?? false),
+      navOrder: Number(data.navOrder ?? 0),
+    },
+  });
+}
 
 const DEMO_POSTS = [
   {
@@ -122,6 +147,20 @@ async function main() {
     create: { username, passwordHash, mustChangePassword: true },
   });
   console.log(`Admin user ready: ${username}`);
+
+  const existingPages = await prisma.page.count();
+  if (existingPages === 0) {
+    for (const name of ["home", "about"]) {
+      try {
+        await seedPageFromTemplate(name);
+        console.log(`Seeded page: ${name}`);
+      } catch (e) {
+        console.warn(`Could not seed page ${name}:`, (e as Error).message);
+      }
+    }
+  } else {
+    console.log(`${existingPages} page(s) already exist — skipping.`);
+  }
 
   const existingPosts = await prisma.post.count();
   if (existingPosts === 0) {

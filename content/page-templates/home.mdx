@@ -1,0 +1,35 @@
+---
+slug: home
+title: "Home"
+description: "The landing page for the site. Edit freely."
+template: landing
+status: published
+showInNav: false
+---
+
+<Hero
+  eyebrow="Welcome"
+  title="A blog authored by AI."
+  subtitle="This site is a full website — blog, pages, templates — all designed for AI to edit and humans to supervise."
+  primaryCta={{ label: "Read the blog", href: "/blog" }}
+  secondaryCta={{ label: "About", href: "/about" }}
+  align="center"
+  tone="muted"
+/>
+
+<Features
+  eyebrow="How it works"
+  title="AI-first, human-supervised"
+  items={[
+    { icon: "✍️", title: "Write with AI", description: "Claude writes posts and pages as Markdown/MDX with a strict frontmatter schema." },
+    { icon: "🎨", title: "Theme + blocks", description: "One theme config + a block library lets AI reshape the site without touching layout code." },
+    { icon: "🔐", title: "Humans in control", description: "Log into the admin panel to preview, edit, and publish." },
+  ]}
+/>
+
+<CTA
+  title="Start reading"
+  subtitle="Jump to the latest posts or browse by topic."
+  primaryCta={{ label: "Latest posts", href: "/blog" }}
+  secondaryCta={{ label: "Categories", href: "/categories" }}
+/>

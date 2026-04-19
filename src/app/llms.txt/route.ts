@@ -1,8 +1,12 @@
 import { getPublishedPosts } from "@/lib/posts";
+import { getAllPublishedPages } from "@/lib/pages";
 import { site } from "@/lib/site";
 
 export async function GET() {
-  const posts = await getPublishedPosts();
+  const [posts, pages] = await Promise.all([
+    getPublishedPosts(),
+    getAllPublishedPages(),
+  ]);
 
   const lines: string[] = [
     `# ${site.name}`,
@@ -22,11 +26,19 @@ export async function GET() {
     `- [All posts (RSS)](${site.url}/rss.xml)`,
     `- [Sitemap](${site.url}/sitemap.xml)`,
     `- [Categories](${site.url}/categories)`,
-    `- [About](${site.url}/about)`,
     "",
-    "## Posts",
+    "## Pages",
     "",
   ];
+
+  for (const p of pages.filter((pg) => pg.slug !== "home")) {
+    const desc = p.description ?? "";
+    lines.push(`- [${p.title}](${site.url}/${p.slug}): ${desc}`);
+  }
+
+  lines.push("");
+  lines.push("## Posts");
+  lines.push("");
 
   for (const p of posts) {
     const desc = p.description ?? p.excerpt ?? "";

@@ -1,0 +1,66 @@
+---
+slug: landing
+title: "Landing page starter"
+description: "Hero + features + testimonials + CTA. Edit and duplicate."
+template: landing
+status: draft
+showInNav: false
+---
+
+<Hero
+  eyebrow="New"
+  title="Ship your thing."
+  subtitle="A concise, reader-friendly promise. One sentence explaining the value."
+  primaryCta={{ label: "Get started", href: "/contact" }}
+  secondaryCta={{ label: "Learn more", href: "/blog" }}
+  align="center"
+  tone="muted"
+/>
+
+<Logos
+  title="Trusted by teams at"
+  items={[
+    { name: "Acme" },
+    { name: "Globex" },
+    { name: "Initech" },
+    { name: "Umbrella" },
+    { name: "Stark" },
+  ]}
+/>
+
+<Features
+  eyebrow="Features"
+  title="Everything you need"
+  subtitle="Three short promises that a skim reader can believe in 10 seconds."
+  items={[
+    { icon: "⚡", title: "Fast", description: "One line describing speed." },
+    { icon: "🔒", title: "Secure", description: "One line describing safety." },
+    { icon: "🎯", title: "Focused", description: "One line describing clarity." },
+  ]}
+/>
+
+<Stats
+  items={[
+    { value: "99.9%", label: "Uptime" },
+    { value: "2s", label: "p95 latency" },
+    { value: "10k+", label: "Customers" },
+  ]}
+  tone="muted"
+/>
+
+<Testimonials
+  title="What people say"
+  items={[
+    { quote: "Short, quotable praise.", author: "A real customer", role: "Role, Company" },
+    { quote: "Short, quotable praise.", author: "A real customer", role: "Role, Company" },
+    { quote: "Short, quotable praise.", author: "A real customer", role: "Role, Company" },
+  ]}
+/>
+
+<CTA
+  title="Ready to start?"
+  subtitle="A last gentle push with the primary benefit."
+  primaryCta={{ label: "Get started", href: "/contact" }}
+  secondaryCta={{ label: "Read the blog", href: "/blog" }}
+  tone="accent"
+/>
