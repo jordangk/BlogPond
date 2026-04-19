@@ -1,7 +1,19 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { getAllPostsForAdmin } from "@/lib/posts";
 
 export default async function AdminDashboard() {
+  const session = await auth();
+  if (!session) redirect("/admin/login");
+
+  const me = await prisma.user.findUnique({
+    where: { username: session.user!.name! },
+    select: { mustChangePassword: true },
+  });
+  if (me?.mustChangePassword) redirect("/admin/settings?first=1");
+
   const posts = await getAllPostsForAdmin();
   const groups: Record<string, typeof posts> = {
     draft: [],
@@ -14,12 +26,20 @@ export default async function AdminDashboard() {
     <main className="mx-auto max-w-5xl px-6 py-10">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Posts</h1>
-        <Link
-          href="/admin/posts/new"
-          className="rounded bg-neutral-900 px-3 py-1.5 text-sm text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
-        >
-          New post
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/settings"
+            className="text-sm text-neutral-500 hover:underline"
+          >
+            Settings
+          </Link>
+          <Link
+            href="/admin/posts/new"
+            className="rounded bg-neutral-900 px-3 py-1.5 text-sm text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+          >
+            New post
+          </Link>
+        </div>
       </div>
 
       {(["draft", "scheduled", "published"] as const).map((status) => (

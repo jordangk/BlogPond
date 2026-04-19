@@ -84,6 +84,89 @@ The site auto-generates: `sitemap.xml`, `robots.txt`, `rss.xml`,
 OpenGraph + Twitter meta tags, and `BlogPosting` JSON-LD.
 You do not need to add meta tags manually — just fill frontmatter well.
 
+## REST API (preferred for programmatic authoring)
+
+All endpoints require an API key. Send either header:
+
+- `Authorization: Bearer $API_KEY`
+- `X-API-Key: $API_KEY`
+
+Key is set via the `API_KEY` env var. Generate with `openssl rand -hex 32`.
+
+### Endpoints
+
+| Method | Path                            | Purpose                                  |
+| ------ | ------------------------------- | ---------------------------------------- |
+| GET    | `/api/posts`                    | List posts. Query: `status`, `tag`, `limit` |
+| POST   | `/api/posts`                    | Create a post                            |
+| GET    | `/api/posts/:slug`              | Read one post (any status)               |
+| PATCH  | `/api/posts/:slug`              | Partial update                           |
+| DELETE | `/api/posts/:slug`              | Delete                                   |
+| POST   | `/api/posts/:slug/publish`      | Flip to published now                    |
+| GET    | `/api/tags`                     | List all tags with post counts           |
+
+### Create a post
+
+```bash
+curl -X POST http://localhost:3000/api/posts \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "My first API post",
+    "description": "A 140–160 char search snippet.",
+    "status": "published",
+    "tags": ["howto", "api"],
+    "content": "## Heading\n\nBody in markdown."
+  }'
+```
+
+Body schema (`PostInput` in `src/lib/post-writes.ts`):
+
+```ts
+{
+  title: string;           // required
+  slug?: string;           // defaults to slugify(title)
+  description?: string;
+  excerpt?: string;        // defaults to auto-derived from content
+  content: string;         // markdown, required
+  status?: "draft" | "scheduled" | "published";  // default "draft"
+  publishedAt?: string;    // ISO 8601; only used when status=published
+  scheduledFor?: string;   // ISO 8601; only used when status=scheduled
+  coverImage?: string;     // URL
+  author?: string;
+  tags?: string[];         // upserted automatically
+}
+```
+
+### Update a post
+
+PATCH accepts any subset of the same fields:
+
+```bash
+curl -X PATCH http://localhost:3000/api/posts/my-slug \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"published"}'
+```
+
+### Response shape
+
+```json
+{
+  "post": {
+    "id": "cl...",
+    "slug": "my-slug",
+    "title": "...",
+    "status": "published",
+    "publishedAt": "2026-04-19T12:34:56.789Z",
+    "tags": ["howto", "api"],
+    "...": "..."
+  }
+}
+```
+
+The API triggers `revalidatePath` on the affected pages — you do not need to restart or manually invalidate caches.
+
 ## Editing templates
 
 `content/templates/*.md` are starter structures. Edit them to change the
@@ -117,9 +200,11 @@ npm run post:tick                                    # release any due scheduled
 ## Environment variables
 
 See `.env.example`. Required: `DATABASE_URL`, `AUTH_SECRET`, `ADMIN_USERNAME`,
-`ADMIN_PASSWORD`, `SITE_URL`, `SITE_NAME`, `SITE_DESCRIPTION`.
+`ADMIN_PASSWORD`, `SITE_URL`, `SITE_NAME`, `SITE_DESCRIPTION`, `API_KEY`.
 
-To rotate the admin password, edit `.env.local` and re-run `npm run db:seed`.
+To rotate the admin password, sign into `/admin/settings` and change it there
+(recommended). Re-seeding via `npm run db:seed` sets `mustChangePassword=true`
+and forces a change on next login.
 
 ## What *not* to do
 

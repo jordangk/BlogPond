@@ -78,6 +78,21 @@ export function serializeFrontmatter(fm: {
   return lines.join("\n");
 }
 
+export function wordCount(markdown: string): number {
+  return markdown
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`[^`]*`/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_~\-]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
+export function readingMinutes(markdown: string): number {
+  return Math.max(1, Math.round(wordCount(markdown) / 220));
+}
+
 export function excerptFrom(markdown: string, max = 180): string {
   const stripped = markdown
     .replace(/```[\s\S]*?```/g, "")
