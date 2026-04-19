@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blog
 
-## Getting Started
+AI-first blog CMS. Markdown content, SQLite + Prisma, Next.js 16 App Router, Tailwind v4, NextAuth credentials.
 
-First, run the development server:
+The primary author is an AI assistant (see `CLAUDE.md`). Humans log in to `/admin` to supervise, edit, and publish.
+
+## Quick start
 
 ```bash
+cp .env.example .env.local       # then edit SITE_URL, ADMIN_PASSWORD, AUTH_SECRET
+npm install                       # also runs prisma generate
+npm run db:migrate                # create the sqlite DB
+npm run db:seed                   # seed admin user from .env
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 for the blog, http://localhost:3000/admin to sign in.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## AI authoring
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Full guide in [`CLAUDE.md`](./CLAUDE.md). Short version:
 
-## Learn More
+```bash
+cp content/templates/standard-post.md content/drafts/my-post.md
+# edit the file — frontmatter + markdown body
+npm run post:sync -- content/drafts/my-post.md
+npm run post:list
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Vercel: set env vars, add a Cron job hitting a route that calls `post:tick`
+  (or run the CLI script on a schedule).
+- Self-hosted: `npm run build && npm start` behind a reverse proxy. Run
+  `npm run post:tick` every few minutes via cron/systemd.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For a hosted SQLite replacement consider Turso (libsql) or switch the Prisma
+provider to `postgresql`.

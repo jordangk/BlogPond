@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Post {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  title        String
+  description  String?
+  excerpt      String?
+  content      String
+  status       String    @default("draft")
+  publishedAt  DateTime?
+  scheduledFor DateTime?
+  coverImage   String?
+  author       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  tags         Tag[]     @relation("PostTags")
+
+  @@index([status, publishedAt])
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  slug  String @unique
+  name  String
+  posts Post[] @relation("PostTags")
+}
