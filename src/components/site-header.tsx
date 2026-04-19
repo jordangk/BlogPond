@@ -14,7 +14,6 @@ export async function SiteHeader() {
         <div className="flex items-center gap-5 text-sm text-neutral-600 dark:text-neutral-400">
           <Link href="/" className="hover:text-foreground">Home</Link>
           <Link href="/categories" className="hover:text-foreground">Categories</Link>
-          <Link href="/schedule" className="hover:text-foreground">Upcoming</Link>
           <Link href="/about" className="hover:text-foreground">About</Link>
           <Link href="/rss.xml" className="hover:text-foreground" aria-label="RSS feed">RSS</Link>
         </div>

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   getPublishedPosts,
-  getScheduledPosts,
   getAllTags,
   getPostCounts,
 } from "@/lib/posts";
@@ -9,9 +8,8 @@ import { readingMinutes } from "@/lib/markdown";
 import { site } from "@/lib/site";
 
 export default async function Home() {
-  const [posts, upcoming, tags, counts] = await Promise.all([
+  const [posts, tags, counts] = await Promise.all([
     getPublishedPosts(12),
-    getScheduledPosts(3),
     getAllTags(),
     getPostCounts(),
   ]);
@@ -30,7 +28,6 @@ export default async function Home() {
         </h1>
         <p className="mt-4 max-w-2xl text-neutral-600 dark:text-neutral-400">
           {counts.posts} published {counts.posts === 1 ? "post" : "posts"}
-          {counts.scheduled > 0 && ` · ${counts.scheduled} scheduled`}
           {counts.tags > 0 && ` · ${counts.tags} categories`}
         </p>
       </section>
@@ -151,38 +148,6 @@ export default async function Home() {
                 className="mt-2 inline-block text-xs text-neutral-500 hover:underline"
               >
                 All categories →
-              </Link>
-            </section>
-          )}
-
-          {/* Upcoming */}
-          {upcoming.length > 0 && (
-            <section>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-                Upcoming
-              </h2>
-              <ul className="space-y-3">
-                {upcoming.map((p) => (
-                  <li key={p.id}>
-                    <div className="text-sm font-medium">{p.title}</div>
-                    <div className="text-xs text-neutral-500">
-                      {p.scheduledFor && (
-                        <time dateTime={p.scheduledFor.toISOString()}>
-                          {p.scheduledFor.toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </time>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/schedule"
-                className="mt-3 inline-block text-xs text-neutral-500 hover:underline"
-              >
-                See all upcoming →
               </Link>
             </section>
           )}

@@ -22,7 +22,6 @@ export async function GET() {
     `- [All posts (RSS)](${site.url}/rss.xml)`,
     `- [Sitemap](${site.url}/sitemap.xml)`,
     `- [Categories](${site.url}/categories)`,
-    `- [Upcoming posts](${site.url}/schedule)`,
     `- [About](${site.url}/about)`,
     "",
     "## Posts",

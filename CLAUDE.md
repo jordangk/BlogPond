@@ -37,7 +37,7 @@ Control via the `status` and date fields in frontmatter:
 status: draft          # not shown publicly
 # ---
 status: scheduled
-scheduledFor: 2026-05-01T09:00:00Z   # shown in /schedule, goes live when date passes
+scheduledFor: 2026-05-01T09:00:00Z   # queued privately; goes live at this time
 # ---
 status: published
 publishedAt: 2026-04-18T10:00:00Z    # live on the public site immediately

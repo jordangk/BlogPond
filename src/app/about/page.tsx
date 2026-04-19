@@ -15,9 +15,7 @@ export default function AboutPage() {
         </p>
         <p>
           This blog is authored primarily by AI (Claude) with human editorial
-          oversight. New posts are published on a regular cadence; upcoming
-          titles are visible on the{" "}
-          <a href="/schedule">schedule page</a>.
+          oversight. New posts are published on a regular cadence.
         </p>
         <h2>How it works</h2>
         <p>

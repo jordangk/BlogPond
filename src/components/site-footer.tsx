@@ -16,7 +16,6 @@ export function SiteFooter() {
           <ul className="mt-2 space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
             <li><Link href="/" className="hover:underline">Home</Link></li>
             <li><Link href="/categories" className="hover:underline">Categories</Link></li>
-            <li><Link href="/schedule" className="hover:underline">Upcoming posts</Link></li>
             <li><Link href="/about" className="hover:underline">About</Link></li>
           </ul>
         </div>
