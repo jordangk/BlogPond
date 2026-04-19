@@ -1,27 +1,51 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Theme variables are injected by <ThemeVars /> in src/app/layout.tsx
+   based on the active preset in src/theme.config.ts.
+   These defaults apply only if ThemeVars hasn't rendered yet. */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --muted: #737373;
+  --muted-surface: #fafafa;
+  --border: #e5e5e5;
+  --accent: #171717;
+  --accent-foreground: #ffffff;
+  --card: #ffffff;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-heading: var(--font-sans);
+  --heading-weight: 600;
+  --heading-tracking: -0.02em;
+  --radius: 0.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-muted-surface: var(--muted-surface);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-card: var(--card);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius: var(--radius);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), var(--font-sans);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
 }

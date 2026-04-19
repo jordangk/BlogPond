@@ -172,12 +172,94 @@ The API triggers `revalidatePath` on the affected pages — you do not need to r
 `content/templates/*.md` are starter structures. Edit them to change the
 default shape of new posts. They are plain markdown — no migration needed.
 
-## Editing the site's look
+## Changing the design
 
-- Global layout: `src/app/layout.tsx` (header, footer, fonts)
-- Post list (home): `src/app/page.tsx`
-- Post detail: `src/app/posts/[slug]/page.tsx`
-- Styles: Tailwind v4 in `src/app/globals.css` (uses `@plugin "@tailwindcss/typography"` for post body)
+**Everything visual is controlled by one file:** `src/theme.config.ts`.
+It exports a typed `theme` object. Every page, header, footer, card, and
+color class reads from it. You can change the entire look of the site without
+touching a single component.
+
+### The three ways to change the look
+
+1. **Switch presets** — fastest. In `.env.local`:
+   ```
+   THEME=magazine   # one of: minimal | magazine | newspaper | playful
+   ```
+   Then restart the dev server.
+
+2. **Tweak one field** — edit the bottom of `src/theme.config.ts`:
+   ```ts
+   export const theme: Theme = {
+     ...picked,
+     colors: { ...picked.colors, accent: "#ff0066" },
+   };
+   ```
+
+3. **Edit a preset** — in `src/themes/<name>.ts`. Change colors, fonts,
+   radii, feature flags.
+
+### Theme shape (see `src/themes/types.ts`)
+
+```ts
+type Theme = {
+  colors: {        // both `colors` (light) and `dark` override
+    background, foreground,
+    muted, mutedSurface,
+    border,
+    accent, accentForeground,
+    card,
+  };
+  fonts: {
+    sansVar, monoVar, headingVar,       // CSS variables from next/font
+    headingWeight, headingTracking,
+  };
+  layout: {
+    maxWidthClass,          // header/home/category page width (Tailwind class)
+    contentMaxWidthClass,   // article/post width
+    radius,                 // used via rounded-[var(--radius)]
+  };
+  features: {
+    stickyHeader,
+    showTagStrip,           // horizontal tag strip in the header
+    showHero,               // home hero section
+    showFeaturedCard,       // big "Latest" card on the home page
+    showSidebarCategories,  // 3-col home layout with sidebar
+    footerVariant,          // "minimal" | "columns"
+    showReadingTime,
+    heroStyle,              // "plain" | "accent" (accent uses bg-muted-surface)
+  };
+};
+```
+
+### How colors flow
+
+- The theme defines hex colors.
+- `src/components/theme-vars.tsx` emits a `<style>` tag that sets CSS
+  variables on `:root` (including a dark-mode override).
+- `src/app/globals.css` maps those CSS vars to Tailwind theme tokens via
+  `@theme inline`, so classes like `bg-background`, `text-foreground`,
+  `text-muted`, `border-border`, `bg-card`, `bg-muted-surface` just work.
+- Components only use **semantic color classes** — never hardcoded
+  `bg-neutral-50` / `text-neutral-600` etc.
+
+### How fonts flow
+
+- All supported fonts are loaded once in `src/lib/fonts.ts` using
+  `next/font/google`. Each exposes a CSS variable.
+- The theme picks which variable is active (`fonts.sansVar`,
+  `fonts.headingVar`, `fonts.monoVar`).
+- `theme-vars.tsx` sets `--font-sans`, `--font-heading`, `--font-mono` to
+  those variables. `globals.css` applies them and sets heading weight +
+  tracking automatically.
+
+To add a new font: add it to `src/lib/fonts.ts`, add the variable name to
+`FONT_VARS` in `src/themes/types.ts`, and reference it from a preset.
+
+### Feature flags vs. hand-editing
+
+For cosmetic changes, prefer flags (`theme.features.showHero = false`).
+For structural changes (new homepage section, different post layout),
+edit the component file — but read from `theme` for colors, widths, fonts.
 
 ## Useful commands
 

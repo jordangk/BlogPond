@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { renderMarkdown, readingMinutes, wordCount } from "@/lib/markdown";
 import { site } from "@/lib/site";
+import { theme } from "@/theme.config";
 
 export async function generateStaticParams() {
   const posts = await getPublishedPosts();
@@ -120,7 +121,7 @@ export default async function PostPage({
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <main className={`mx-auto ${theme.layout.contentMaxWidthClass} px-6 py-12`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingLd) }}
@@ -129,7 +130,7 @@ export default async function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <nav className="mb-6 text-xs text-neutral-500">
+      <nav className="mb-6 text-xs text-muted">
         <Link href="/" className="hover:underline">Home</Link>
         <span> / </span>
         {post.tags[0] ? (
@@ -143,19 +144,15 @@ export default async function PostPage({
             <span> / </span>
           </>
         ) : null}
-        <span className="text-neutral-400">{post.title}</span>
+        <span className="text-muted/70">{post.title}</span>
       </nav>
       <article>
-        <header className="mb-8 border-b border-neutral-200 pb-6 dark:border-neutral-800">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {post.title}
-          </h1>
+        <header className="mb-8 border-b border-border pb-6">
+          <h1 className="text-3xl sm:text-4xl">{post.title}</h1>
           {post.description && (
-            <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-400">
-              {post.description}
-            </p>
+            <p className="mt-3 text-lg text-muted">{post.description}</p>
           )}
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-neutral-500">
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
             <time dateTime={post.publishedAt?.toISOString()}>
               {post.publishedAt?.toLocaleDateString(undefined, {
                 year: "numeric",
@@ -163,7 +160,9 @@ export default async function PostPage({
                 day: "numeric",
               })}
             </time>
-            <span>· {minutes} min read</span>
+            {theme.features.showReadingTime && (
+              <span>· {minutes} min read</span>
+            )}
             {post.author && <span>· {post.author}</span>}
           </div>
           {post.tags.length > 0 && (
@@ -172,7 +171,7 @@ export default async function PostPage({
                 <Link
                   key={t.id}
                   href={`/tags/${t.slug}`}
-                  className="rounded border border-neutral-300 px-2 py-0.5 text-neutral-600 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-900"
+                  className="rounded-[var(--radius)] border border-border px-2 py-0.5 text-muted hover:bg-muted-surface"
                 >
                   {t.name}
                 </Link>
@@ -185,10 +184,8 @@ export default async function PostPage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </article>
-      <footer className="mt-12 flex items-center justify-between border-t border-neutral-200 pt-6 text-sm text-neutral-500 dark:border-neutral-800">
-        <Link href="/" className="hover:underline">
-          ← All posts
-        </Link>
+      <footer className="mt-12 flex items-center justify-between border-t border-border pt-6 text-sm text-muted">
+        <Link href="/" className="hover:underline">← All posts</Link>
         <Link href="/categories" className="hover:underline">
           Browse categories →
         </Link>
