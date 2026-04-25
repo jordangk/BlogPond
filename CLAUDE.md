@@ -172,6 +172,30 @@ The API triggers `revalidatePath` on the affected pages — you do not need to r
 `content/templates/*.md` are starter structures. Edit them to change the
 default shape of new posts. They are plain markdown — no migration needed.
 
+## Deploying behind a reverse-proxy path prefix
+
+If the site is served at something like
+`https://example.com/m/abc/sites/blogpond/` rather than the root,
+set environment variables — **never** hardcode prefixes in MDX, blocks,
+post content, or `<Link>` hrefs.
+
+```bash
+BASE_PATH="/m/abc/sites/blogpond"     # path prefix the proxy mounts
+ASSET_PREFIX="https://cdn.example.com" # only if assets live on a CDN
+SITE_URL="https://example.com/m/abc/sites/blogpond"  # full canonical URL
+```
+
+Next.js (configured in `next.config.ts`) automatically rewrites:
+- every `_next/static/*` asset URL
+- every internal `<Link href="/foo">` (becomes `/m/abc/sites/blogpond/foo`)
+- `<Image>` srcs
+- the sitemap, RSS, robots, and llms.txt routes
+
+**The takeaway for AI authors:** always write hrefs and image paths as
+if the site were at root (`/about`, `/posts/x`). Don't insert prefixes —
+the framework adds them. If a deployed page is missing styles, the fix
+is the env var, not the content.
+
 ## Pages (beyond the blog)
 
 The site is a full website builder. Alongside blog posts, you have **pages**
