@@ -162,6 +162,88 @@ async function main() {
     console.log(`${existingPages} page(s) already exist — skipping.`);
   }
 
+  const liquidExists = await prisma.page.findUnique({
+    where: { slug: "liquid-demo" },
+  });
+  if (!liquidExists) {
+    await prisma.page.create({
+      data: {
+        slug: "liquid-demo",
+        title: "Liquid renderer demo",
+        description:
+          "A self-contained page rendered by Liquid with inline CSS — no Tailwind chunks, no Next layout. Editable by GrapesJS.",
+        renderer: "liquid",
+        content: "(See liquidSource — this row uses the Liquid renderer.)",
+        template: "landing",
+        status: "published",
+        publishedAt: new Date(),
+        liquidCss: `
+.wrap{max-width:960px;margin:0 auto;padding:48px 24px}
+.hero{padding:64px 0;text-align:center}
+.hero h1{font-size:48px;line-height:1.1;margin:0 0 16px}
+.hero p{font-size:18px;color:#525252;max-width:640px;margin:0 auto 24px}
+.btn{display:inline-block;padding:10px 18px;border-radius:8px;background:#171717;color:#fff;text-decoration:none;font-weight:500}
+.btn-secondary{background:#fff;color:#171717;border:1px solid #e5e5e5;margin-left:8px}
+.grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:48px 0}
+.card{padding:20px;border:1px solid #e5e5e5;border-radius:8px}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0;color:#525252;font-size:14px}
+.muted{color:#525252;font-size:13px}
+.section{padding:48px 0;border-top:1px solid #e5e5e5}
+.section h2{font-size:28px;margin:0 0 24px}
+.post{padding:12px 0;border-bottom:1px solid #f5f5f5}
+.post a{color:inherit;text-decoration:none;font-weight:500}
+.post a:hover{text-decoration:underline}
+        `,
+        liquidData: JSON.stringify({
+          eyebrow: "Liquid renderer",
+          ctaPrimary: { label: "View source", href: "/admin/pages" },
+          ctaSecondary: { label: "Read the blog", href: "/blog" },
+          features: [
+            { title: "No asset chunks", body: "One self-contained HTML doc." },
+            { title: "Inline CSS", body: "Saved per-page; survives any proxy." },
+            { title: "Editable visually", body: "GrapesJS reads/writes html+css." },
+          ],
+        }),
+        liquidSource: `<div class="wrap">
+  <section class="hero">
+    <p class="muted">{{ data.eyebrow }}</p>
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.description }}</p>
+    <p>
+      <a class="btn" href="{{ data.ctaPrimary.href }}">{{ data.ctaPrimary.label }}</a>
+      <a class="btn btn-secondary" href="{{ data.ctaSecondary.href }}">{{ data.ctaSecondary.label }}</a>
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>What's different</h2>
+    <div class="grid">
+      {% for f in data.features %}
+        <div class="card">
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Recent posts (live from the same DB)</h2>
+    {% for post in posts | limit: 3 %}
+      <div class="post">
+        <a href="{{ post.url }}">{{ post.title }}</a>
+        <div class="muted">{{ post.publishedAt | date: "%B %d, %Y" }}{% if post.author %} · {{ post.author }}{% endif %}</div>
+      </div>
+    {% endfor %}
+    <p class="muted" style="margin-top:24px">Drops available: <code>site, page, posts, nav, footerColumns, primaryCTA, data</code>.</p>
+  </section>
+</div>`,
+      },
+    });
+    console.log("Seeded liquid-demo page (renderer=liquid).");
+  }
+
   const existingPosts = await prisma.post.count();
   if (existingPosts === 0) {
     for (const demo of DEMO_POSTS) {

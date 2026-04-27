@@ -42,19 +42,25 @@ model Tag {
 }
 
 model Page {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  description String?
-  content     String
-  template    String    @default("standard")
-  status      String    @default("draft")
-  publishedAt DateTime?
-  showInNav   Boolean   @default(false)
-  navOrder    Int       @default(0)
-  coverImage  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  title        String
+  description  String?
+  // Renderer: "mdx" uses content as MDX inside the Next.js layout.
+  // "liquid" uses liquidSource + liquidCss + liquidData and bypasses layout.
+  renderer     String    @default("mdx")
+  content      String
+  liquidSource String?
+  liquidCss    String?
+  liquidData   String?
+  template     String    @default("standard")
+  status       String    @default("draft")
+  publishedAt  DateTime?
+  showInNav    Boolean   @default(false)
+  navOrder     Int       @default(0)
+  coverImage   String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([status, slug])
   @@index([showInNav, navOrder])

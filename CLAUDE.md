@@ -288,6 +288,51 @@ redirects to `/blog`. To make `/` a proper landing, edit the
 `content/page-templates/home.mdx` and resync, or edit the "home" page
 directly in the admin UI.
 
+## Two renderers: MDX vs Liquid
+
+Pages have a `renderer` field. Pick per page based on what's authoring it:
+
+| Renderer | Use for                                          | URL          | Layout |
+| -------- | ------------------------------------------------ | ------------ | ------ |
+| `mdx`    | Designer/AI-authored pages with the block library | `/<slug>`    | wrapped by Next.js header/footer |
+| `liquid` | Visually edited pages (GrapesJS) — totally self-contained HTML | `/p/<slug>` | none — the page IS the document |
+
+### Liquid pages
+
+Stored as three columns on `Page`:
+- `liquidSource` — the Liquid template (HTML + `{{ }}` placeholders)
+- `liquidCss` — CSS string, inlined into a `<style>` tag at render time
+- `liquidData` — JSON blob (page-specific data), exposed inside the template as `data`
+
+A request to `/p/<slug>` runs Liquid against these drops:
+
+| Drop          | What it is                                       |
+| ------------- | ------------------------------------------------ |
+| `site`        | name, url, description, logo, copyright          |
+| `page`        | slug, title, description, coverImage, url        |
+| `data`        | the page's `liquidData` JSON (page-specific)     |
+| `posts`       | up to 50 most-recent published posts             |
+| `nav`         | `siteConfig.nav`                                 |
+| `footerColumns` | `siteConfig.footerColumns`                     |
+| `primaryCTA`  | `siteConfig.primaryCTA`                          |
+
+Built-in filters: `limit`, `where`, `date` (with `%Y %m %d %B %b` tokens).
+
+Example: `/p/liquid-demo` is seeded as a working reference. View its
+`liquidSource`, `liquidCss`, `liquidData` in `/admin/pages` (it has no MDX
+content; the renderer reads the Liquid columns directly).
+
+When to pick which:
+- Use **MDX** for posts and SEO-tuned structured pages (sitemap, JSON-LD,
+  ISR work better here).
+- Use **Liquid** when the page must be a single self-contained HTML doc
+  (no `_next/static/*.css` chunks), survive arbitrary reverse proxies,
+  and be edited by humans in a visual builder (GrapesJS).
+
+For GrapesJS integration: save `editor.getHtml()` into `liquidSource`
+and `editor.getCss()` into `liquidCss`. Use `{{ }}` placeholders in the
+HTML where you want dynamic data.
+
 ## Site chrome (nav, footer, logo)
 
 Edit `src/site.config.ts`:
