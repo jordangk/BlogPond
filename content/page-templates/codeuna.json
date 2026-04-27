@@ -1,0 +1,56 @@
+{
+  "slug": "codeuna",
+  "title": "CodeUna — Software That Scales",
+  "description": "Senior engineering consultancy. Cloud architecture, DevOps, custom development for teams shipping critical systems.",
+  "renderer": "liquid",
+  "template": "landing",
+  "status": "draft",
+  "showInNav": false,
+  "navOrder": 0,
+  "data": {
+    "trustLogos": ["Northwind", "Helio", "Vertex", "Loop", "Apex", "Quanta"],
+    "services": [
+      { "icon": "cloud", "title": "Cloud Architecture", "description": "Multi-region, cost-aware infrastructure designed to grow." },
+      { "icon": "gear-six", "title": "DevOps Automation", "description": "Pipelines, IaC, observability — the boring parts done right." },
+      { "icon": "code", "title": "Custom Development", "description": "Production code your engineers will thank you for." },
+      { "icon": "plugs-connected", "title": "System Integration", "description": "Connect what you have without rebuilding what works." },
+      { "icon": "compass", "title": "Technical Strategy", "description": "Roadmaps, architecture reviews, fractional CTO." },
+      { "icon": "stack", "title": "Managed Infrastructure", "description": "On-call coverage, incident response, capacity planning." }
+    ],
+    "process": [
+      { "title": "Discover", "body": "Audit, interviews, requirements." },
+      { "title": "Design", "body": "Architecture, specs, roadmap." },
+      { "title": "Develop", "body": "Iterative sprints, code review, quality gates." },
+      { "title": "Deploy", "body": "Rollout, monitoring, ongoing support." }
+    ],
+    "cases": [
+      {
+        "category": "Healthcare",
+        "title": "HIPAA-grade platform migration",
+        "metric": "40% infrastructure cost reduction",
+        "body": "Migrated a regulated workload to a multi-region setup with zero downtime.",
+        "image": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80&auto=format&fit=crop"
+      },
+      {
+        "category": "Fintech",
+        "title": "High-throughput payments API",
+        "metric": "$2M daily volume at sub-50ms p99",
+        "body": "Replatformed payments to handle 10× peak traffic without downtime.",
+        "image": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80&auto=format&fit=crop"
+      },
+      {
+        "category": "E-commerce",
+        "title": "Service-mesh cutover",
+        "metric": "Zero downtime during peak season",
+        "body": "Lifted a monolith into a service mesh with no customer-visible interruption.",
+        "image": "https://images.unsplash.com/photo-1556742393-d75f468bfcb0?w=800&q=80&auto=format&fit=crop"
+      }
+    ],
+    "techStack": ["React", "Node.js", "Python", "Azure", "AWS", "Docker", "Kubernetes", "Terraform"],
+    "testimonial": {
+      "author": "David Chen",
+      "role": "VP Engineering, Helio",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80&auto=format&fit=crop"
+    }
+  }
+}

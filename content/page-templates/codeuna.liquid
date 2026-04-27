@@ -1,0 +1,189 @@
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#"><span class="logo-mark"></span><span>CodeUna</span></a>
+    <nav class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#cases">Case Studies</a>
+      <a href="#blog">Insights</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn btn-primary" href="#contact">Start a Project</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <span class="eyebrow">Now booking Q3 engagements</span>
+      <h1>We Build Software That <span class="accent">Scales</span>.</h1>
+      <p class="lead">Senior engineers architecting and operating the systems your business depends on. Cloud-native, observable, ready for what's next.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#contact">Start a Project →</a>
+        <a class="btn btn-secondary" href="#cases">View Our Work</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="glass-card card-3"></div>
+      <div class="glass-card card-2"></div>
+      <div class="glass-card card-1"></div>
+    </div>
+  </div>
+
+  <div class="trust-strip">
+    <p>Trusted by 50+ engineering teams</p>
+    <div class="trust-logos">
+      {% for logo in data.trustLogos %}
+        <div class="trust-logo"><span class="logo-shape"></span><span>{{ logo }}</span></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="container">
+    <span class="eyebrow">What we do</span>
+    <h2>Engineering capabilities, end to end.</h2>
+    <p class="section-lead">From the first architecture call to on-call rotation, we cover the full lifecycle.</p>
+    <div class="service-grid">
+      {% for s in data.services %}
+        <a class="service-card" href="#contact">
+          <i class="ph ph-{{ s.icon }}"></i>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.description }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="process dark" id="process">
+  <div class="container">
+    <span class="eyebrow">How we work</span>
+    <h2>A proven process, refined over 200+ engagements.</h2>
+    <ol class="process-steps">
+      {% for p in data.process %}
+        <li>
+          <span class="step-num">{{ forloop.index }}</span>
+          <h3>{{ p.title }}</h3>
+          <p>{{ p.body }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="cases" id="cases">
+  <div class="container">
+    <span class="eyebrow">Selected work</span>
+    <h2>Outcomes our clients can measure.</h2>
+    {% for c in data.cases %}
+      <article class="case {% cycle 'left', 'right' %}">
+        <img src="{{ c.image }}" alt="{{ c.title }}" loading="lazy">
+        <div class="case-content">
+          <span class="eyebrow">{{ c.category }}</span>
+          <h3>{{ c.title }}</h3>
+          <p class="metric">{{ c.metric }}</p>
+          <p>{{ c.body }}</p>
+          <a href="#contact" class="link-arrow">Read the case study →</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="stack">
+  <p class="stack-lead">Tech we ship in production</p>
+  <div class="stack-track">
+    {% for t in data.techStack %}<span class="stack-item">{{ t }}</span>{% endfor %}
+    {% for t in data.techStack %}<span class="stack-item">{{ t }}</span>{% endfor %}
+  </div>
+</section>
+
+<section class="testimonial">
+  <div class="container">
+    <blockquote>"CodeUna became our technical co-founder. They shaped how we think about infrastructure for years to come."</blockquote>
+    <div class="quote-author">
+      <img src="{{ data.testimonial.avatar }}" alt="{{ data.testimonial.author }}">
+      <div><strong>{{ data.testimonial.author }}</strong><span>{{ data.testimonial.role }}</span></div>
+    </div>
+    <div class="dots"><span class="active"></span><span></span><span></span></div>
+  </div>
+</section>
+
+<section class="blog" id="blog">
+  <div class="container">
+    <span class="eyebrow">Insights</span>
+    <h2>Notes from the engineering trenches.</h2>
+    <p class="section-lead">Field-tested writing on architecture, ops, and the tradeoffs we keep meeting in production.</p>
+    <div class="blog-grid">
+      {% for post in posts | limit: 3 %}
+        <a class="blog-card" href="{{ post.url }}">
+          {% if post.coverImage %}
+            <img src="{{ post.coverImage }}" alt="{{ post.title }}">
+          {% else %}
+            <div class="blog-cover blog-cover-{{ forloop.index }}"></div>
+          {% endif %}
+          <div class="blog-card-body">
+            {% for tag in post.tags | limit: 1 %}<span class="tag">{{ tag.name }}</span>{% endfor %}
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.excerpt }}</p>
+            <span class="read">Read article →</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner" id="contact">
+  <div class="container">
+    <h2>Ready to ship faster?</h2>
+    <p>Tell us what you're building. We'll reply within one business day.</p>
+    <form class="cta-form" action="/api/contact" method="post">
+      <input type="hidden" name="name" value="Website lead">
+      <input type="hidden" name="message" value="Inbound from /p/codeuna CTA">
+      <input type="email" name="email" placeholder="you@company.com" required>
+      <button class="btn btn-dark" type="submit">Get Started →</button>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark"></span>
+      <strong>CodeUna</strong>
+      <p>Senior engineering for teams shipping critical systems.</p>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Cloud Architecture</a></li>
+        <li><a href="#">DevOps Automation</a></li>
+        <li><a href="#">Custom Development</a></li>
+        <li><a href="#">Managed Infrastructure</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Insights</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@codeuna.dev">hello@codeuna.dev</a></li>
+        <li>Montreal · Toronto · Remote</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {{ "now" | date: "%Y" }} CodeUna · Privacy · Terms</span>
+    <span>Built with BlogPond</span>
+  </div>
+</footer>

@@ -28,6 +28,36 @@ async function seedPageFromTemplate(name: string) {
   });
 }
 
+async function seedLiquidPageFromTemplate(name: string) {
+  const base = resolve(`content/page-templates/${name}`);
+  const [meta, liquid, css] = await Promise.all([
+    readFile(`${base}.json`, "utf8"),
+    readFile(`${base}.liquid`, "utf8"),
+    readFile(`${base}.css`, "utf8"),
+  ]);
+  const m = JSON.parse(meta);
+  const slug = String(m.slug ?? name);
+  await prisma.page.upsert({
+    where: { slug },
+    update: {},
+    create: {
+      slug,
+      title: String(m.title ?? name),
+      description: m.description ?? null,
+      renderer: "liquid",
+      content: `(rendered by Liquid — see liquidSource)`,
+      liquidSource: liquid,
+      liquidCss: css,
+      liquidData: JSON.stringify(m.data ?? {}),
+      template: String(m.template ?? "landing"),
+      status: String(m.status ?? "draft"),
+      publishedAt: m.status === "published" ? new Date() : null,
+      showInNav: Boolean(m.showInNav ?? false),
+      navOrder: Number(m.navOrder ?? 0),
+    },
+  });
+}
+
 const DEMO_POSTS = [
   {
     slug: "welcome-to-blogpond",
@@ -160,6 +190,18 @@ async function main() {
     }
   } else {
     console.log(`${existingPages} page(s) already exist — skipping.`);
+  }
+
+  const codeunaExists = await prisma.page.findUnique({
+    where: { slug: "codeuna" },
+  });
+  if (!codeunaExists) {
+    try {
+      await seedLiquidPageFromTemplate("codeuna");
+      console.log("Seeded liquid page: codeuna");
+    } catch (e) {
+      console.warn("Could not seed codeuna:", (e as Error).message);
+    }
   }
 
   const liquidExists = await prisma.page.findUnique({
