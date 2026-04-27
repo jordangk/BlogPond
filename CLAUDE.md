@@ -288,6 +288,33 @@ redirects to `/blog`. To make `/` a proper landing, edit the
 `content/page-templates/home.mdx` and resync, or edit the "home" page
 directly in the admin UI.
 
+## Sync admin edits back to the repo
+
+Set `EXPORT_TO_REPO=1` in `.env.local` (or production env) and every page
+save (admin UI, REST API, server action) will:
+
+1. Write the page out to `content/page-templates/<slug>.{mdx | json+liquid+css}`
+2. `git add` + `git commit` + `git push` from the running process
+
+Deletes also remove the matching template files and commit. Errors are
+logged but never fail the save.
+
+The CLI counterpart for one-off syncs:
+
+```bash
+npm run page:export -- <slug>     # export a single page
+npm run page:export -- --all      # export every page in the DB
+```
+
+This is what wires the visual editor (admin/GrapesJS) to GitHub: the
+editor saves to the DB → the hook serializes to template files →
+git push. Pulling on another machine + `npm run db:seed` recreates
+the page from the synced files.
+
+For serverless deploys (Vercel etc.) without a writable git checkout,
+swap the implementation in `src/lib/repo-export.ts` to call the GitHub
+contents API with `octokit` and a `GITHUB_TOKEN`. Same hooks, same shape.
+
 ## Two renderers: MDX vs Liquid
 
 Pages have a `renderer` field. Pick per page based on what's authoring it:

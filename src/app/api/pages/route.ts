@@ -7,6 +7,7 @@ import {
   serializePage,
 } from "@/lib/page-writes";
 import { requireApiKey, badRequest } from "@/lib/api-auth";
+import { exportPageToRepo } from "@/lib/repo-export";
 
 export async function GET(req: NextRequest) {
   const unauth = requireApiKey(req);
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
     revalidatePath("/");
     revalidatePath(`/${page.slug}`);
     revalidatePath("/sitemap.xml");
+    await exportPageToRepo(page);
     return NextResponse.json({ page: serializePage(page) }, { status: 201 });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "error";

@@ -7,6 +7,7 @@ import {
   serializePage,
 } from "@/lib/page-writes";
 import { requireApiKey, badRequest, notFound } from "@/lib/api-auth";
+import { exportPageToRepo, deletePageFromRepo } from "@/lib/repo-export";
 
 export async function GET(
   req: NextRequest,
@@ -41,6 +42,7 @@ export async function PATCH(
   revalidatePath(`/${slug}`);
   if (page.slug !== slug) revalidatePath(`/${page.slug}`);
   revalidatePath("/sitemap.xml");
+  await exportPageToRepo(page);
   return NextResponse.json({ page: serializePage(page) });
 }
 
@@ -57,5 +59,6 @@ export async function DELETE(
   revalidatePath("/");
   revalidatePath(`/${slug}`);
   revalidatePath("/sitemap.xml");
+  await deletePageFromRepo(slug, existing.renderer);
   return NextResponse.json({ ok: true, slug });
 }

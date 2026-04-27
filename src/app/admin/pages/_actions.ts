@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/markdown";
+import { exportPageToRepo, deletePageFromRepo } from "@/lib/repo-export";
 
 async function requireAdmin() {
   const s = await auth();
@@ -42,6 +43,7 @@ export async function createPage(formData: FormData) {
   revalidatePath("/");
   revalidatePath(`/${slug}`);
   revalidatePath("/sitemap.xml");
+  await exportPageToRepo(page);
   redirect(`/admin/pages/${page.id}`);
 }
 
@@ -80,6 +82,7 @@ export async function updatePage(id: string, formData: FormData) {
   revalidatePath(`/${current.slug}`);
   if (current.slug !== page.slug) revalidatePath(`/${page.slug}`);
   revalidatePath("/sitemap.xml");
+  await exportPageToRepo(page);
 }
 
 export async function deletePage(id: string) {
@@ -88,5 +91,6 @@ export async function deletePage(id: string) {
   revalidatePath("/");
   revalidatePath(`/${page.slug}`);
   revalidatePath("/sitemap.xml");
+  await deletePageFromRepo(page.slug, page.renderer);
   redirect("/admin/pages");
 }

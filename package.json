@@ -18,7 +18,8 @@
     "post:tick": "tsx scripts/tick.ts",
     "page:sync": "tsx scripts/page-sync.ts",
     "page:pull": "tsx scripts/page-pull.ts",
-    "page:list": "tsx scripts/page-list.ts"
+    "page:list": "tsx scripts/page-list.ts",
+    "page:export": "tsx scripts/page-export.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
